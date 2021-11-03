@@ -1,4 +1,4 @@
-ame: PEP-8
+name: PEP-8
 
 on:
   push:   
