@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>
+  FASTQ_FILE_NAME FastQC-breaker Report
+</title>
+</head>
+<style>
+  div.summary {
+    width: 18em;
+    position: fixed;
+    top: 3em;
+    margin: 1em 0 0 0;
+    font-size: 1.2em;
+  }
+  div.main {
+    display:block;
+    position:absolute;
+    overflow:auto;
+    height:auto;
+    width:auto;
+    top:4.5em;
+    bottom:2.3em;
+    left:18em;
+    right:0;
+    border-left: 1px solid #CCC;
+    padding:0 0 0 1em;
+    background-color: white;
+    font-size: 1.2em;
+    z-index:1;
+  }
+  div.header {
+    background-color: #EEE;
+    border:0;
+    margin:0;
+    padding: 0.5em;
+    font-size: 200%;
+    font-weight: bold;
+    position:fixed;
+    width:100%;
+    top:0;
+    left:0;
+    z-index:2;
+  }
+  div.footer {
+    background-color: #EEE;
+    border:0;
+    margin:0;
+    padding:0.5em;
+    height: 1.3em;
+    overflow:hidden;
+    font-size: 100%;
+    font-weight: bold;
+    position:fixed;
+    bottom:0;
+    width:100%;
+    z-index:2;
+  }
+  div.summary img {
+    margin-bottom:-0.5em;
+    margin-top:0.5em;
+  }
+  main img {
+    margin-bottom:0.5em;
+    margin-top:0.5em;
+  }
+  div.summary h2 {
+    font-color: #123456;
+  }
+  td.bstat {
+    background-color: #eeeeee;
+    padding: 5px;
+  }
+  td.bstat_hdr {
+    background-color: #cccccc;
+    padding: 5px;
+  }
+</style>
+<body>
+<div class='header'>
+  FastQ-Checker Report
+</div>
+  <div class="summary">
+    <h2>Summary</h2>
+    <img src='./good.png'>
+    <a href='#Basic_Statistics'>Basic Statistics</a><br/>
+    <img src='./PER_BASE_SEQUENCE_QUALITY_status.png'>
+    <a href='#Per_base_sequence_quality'>Per base sequence quality</a><br/>
+    <img src='./PER_SEQUENCE_QUALITY_SCORES_status.png'>
+    <a href='#Per_sequence_quality_scores'>Per sequence quality scores</a><br/>
+    <img src='./PER_BASE_SEQUENCE_CONTENT_status.png'>
+    <a href='#Per_base_sequence_content'>Per base sequence content</a><br/>
+    <img src='./PER_SEQUENCE_GC_CONTENT_status.png'>
+    <a href='#Per_sequence_GC_content'>Per sequence GC content</a><br/>
+    <img src='./PER_BASE_N_CONTENT_status.png'>
+    <a href='#Per_base_N_content'>Per base N content</a><br/>
+    <img src='./SEQUENCE_LENGTH_DISTRIBUTION_status.png'>
+    <a href='#Sequence_Length_Distribution'>Sequence Length Distribution</a><br/>
+    <img src='./SEQUENCE_DUPLICATION_LEVELS_status.png'>
+    <a href='#Sequence_Duplication_Levels'>Sequence Duplication Levels</a><br/>
+    <img src='./OVERREPRESENTED_SEQUENCES_status.png'>
+    <a href='#Overrepresented_sequences'>Overrepresented sequences</a><br/>
+    <img src='./PER_BASE_SEQUENCE_QUALITY_status.png'>
+    <a href='#Adapter_Content'>Adapter Content</a><br/>
+  </div>
+  <div class='main'>
+    <div id='Basic_Statistics'>
+      <img src='./good.png' style='float:left;'>
+      <h2>Basic Statistics</h2>
+      <table style='padding-left: 100px;'>
+        <tr><td class='bstat_hdr'><b>Measure</b></td>
+            <td class='bstat_hdr'><b>Value</b></td></tr>
+        <tr><td class='bstat'>Filename</td>
+            <td class='bstat'>BASIC_STATISTICS_filename</td></tr>
+        <tr><td class='bstat'>File type</td>
+            <td class='bstat'>BASIC_STATISTICS_file_type</td></tr>
+        <tr><td class='bstat'>Encoding</td>
+            <td class='bstat'>BASIC_STATISTICS_encoding</td></tr>
+        <tr><td class='bstat'>Total Sequences</td>
+            <td class='bstat'>BASIC_STATISTICS_total_sequences<td></tr>
+        <tr><td class='bstat'>Sequences flagged as poor quality</td>
+            <td class='bstat'>BASIC_STATISTICS_seq_poor_qual</td></tr>
+        <tr><td class='bstat'>Sequence length</td>
+            <td class='bstat'>BASIC_STATISTICS_seq_len</td></tr>
+        <tr><td class='bstat'>%GC</td>
+            <td class='bstat'>BASIC_STATISTICS_gc</td></tr>
+      </table>
+    </div>
+    <div id='Per_base_sequence_quality'>
+      <img src='./PER_BASE_SEQUENCE_QUALITY_status.png' style='float:left;'>
+      <h2>Per base sequence quality</h2>
+      <img src='./per_base_sequence_quality.png'>
+    </div>
+    <div id='Per_sequence_quality_scores'>
+      <img src='./PER_SEQUENCE_QUALITY_SCORES_status.png' style='float:left;'>
+      <h2>Per sequence quality scores</h2>
+      <img src='./per_sequence_quality_scores.png'>
+    </div>
+    <div id='Per_base_sequence_content'>
+      <img src='./PER_BASE_SEQUENCE_CONTENT_status.png' style='float:left;'>
+      <h2>Per base sequence content</h2>
+      <img src='./per_base_sequence_content.png'>
+    </div>
+    <div id='Per_sequence_GC_content'>
+      <img src='./PER_SEQUENCE_GC_CONTENT_status.png' style='float:left;'>
+      <h2>Per sequence GC content</h2>
+      <img src='./per_sequence_gc_content.png'>
+    </div>
+    <div id='Per_base_N_content'>
+      <img src='./PER_BASE_N_CONTENT_status.png' style='float:left;'>
+      <h2>Per base N content</h2>
+      <img src='./per_base_n_content.png'>
+    </div>
+    <div id='Sequence_Length_Distribution'>
+      <img src='./SEQUENCE_LENGTH_DISTRIBUTION_status.png' style='float:left;'>
+      <h2>Sequence Length Distribution</h2>
+      <img src='./sequence_length_distribution.png'>
+    </div>
+    <div id='Sequence_Duplication_Levels'>
+      <img src='./SEQUENCE_DUPLICATION_LEVELS_status.png' style='float:left;'>
+      <h2>Sequence Duplication Levels</h2>
+      <img src='./sequence_duplication_levels.png'>
+    </div>
+    <div id='Overrepresented_sequences'>
+      <img src='./OVERREPRESENTED_SEQUENCES_status.png' style='float:left;'>
+      <h2>Overrepresented sequences</h2>
+      <img src='./overrepresented_sequences.png'>
+    </div>
+    <div id='Adapter_Content'>
+      <img src='./PER_BASE_SEQUENCE_QUALITY_status.png' style='float:left;'>
+      <h2>Adapter Content</h2>
+      <img src='./adapter_content.png'>
+    </div>
+  </div>
+</div>
+<div class='footer'>
+  Produced by FastQ-Checker (version 0.0.000001)
+</div>
+</body>
+</html>
+
