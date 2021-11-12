@@ -10,6 +10,7 @@ import reports
 # -----------------------------------------------------------------------------
 def do_check(input_fastq):
 
+    
     tm1 = time.time()
 
     # open files
