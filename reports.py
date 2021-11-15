@@ -165,26 +165,52 @@ def make_report_per_base_sequence_content(sequences, imgname):
     g_count = np.count_nonzero(lines == ord('G'), axis=0)
     c_count = np.count_nonzero(lines == ord('C'), axis=0)
     t_count = np.count_nonzero(lines == ord('T'), axis=0)
-    percents = np.vstack(
-        [g_count * 100 / lines.shape[0], a_count * 100 / lines.shape[0], t_count * 100 / lines.shape[0],
-         c_count * 100 / lines.shape[0]])
+    percents = np.vstack([g_count*100/lines.shape[0], a_count*100/lines.shape[0], t_count*100/lines.shape[0], c_count*100/lines.shape[0]])
 
     # image creation
     fig = plt.figure(figsize=(10, 7))
     ax = fig.add_subplot(111)
     ax.set(title='Sequence content across all bases', xlabel='Position in read (bp)')
-    xs = range(sequences.max_len)  # here will be max seq len in class sequences
+    xs = range(sequences.max_len)  # max seq len in class sequences
     ys1 = percents[0]  # g
     ys2 = percents[1]  # a
     ys3 = percents[2]  # t
     ys4 = percents[3]  # c
+
+    # add pretty x-labels, make low density to be readable
+    cnt = 0
+    pos = 0  # position in sequence
+    x_step = 1
+    x_labels = []  # list of labels
+    xlen = lines.shape[1]  # length of reads
+    while pos < xlen:  # iter by position
+        if xlen > 60 and cnt == 9:
+            x_step = 2
+        if x_step == 1:
+            if cnt < 9:
+                x_labels.append(str(pos + 1))
+            else:
+                if ((pos) % 2) == 0:
+                    x_labels.append(str(pos + 1))
+                else:
+                    x_labels.append("")  # empty label
+        else:  # xstep > 1
+            if ((pos + 1) % 6) == 0:
+            # pair label
+                x_labels.append(str(pos + 1) + '-' + str(pos + 2))
+            else:
+                x_labels.append("")  # empty label
+        pos += 1
+        cnt += 1
+
     ax.plot(xs, ys1, label='%G', color='r')
     ax.plot(xs, ys2, label='%A', color='blue')
     ax.plot(xs, ys3, label='%T', color='black')
     ax.plot(xs, ys4, label='%C', color='lime')
-    ax.set_xticks(range(1, lines.shape[1] + 1, 1))
+    ax.set_xlim([1, lines.shape[1] + 1])
+    ax.set_xticks(range(1, lines.shape[1]+1, 1))
+    ax.set_xticklabels(x_labels)
     ax.set_yticks(range(0, 110, 10))
-    ax.set_xlim([1, lines.shape[1]])
     ax.set_ylim([0.0, 100.0])
     plt.legend()
     ax.grid()
@@ -196,9 +222,9 @@ def make_report_per_base_sequence_content(sequences, imgname):
     AT_diff = percents[1] - percents[2]
     status = 'good'
     for i in range((GC_diff.shape[0])):
-        if 20 > np.sqrt(GC_diff[i] ** 2) >= 10 or 20 > np.sqrt(AT_diff[i] ** 2) >= 10:
+        if 20 > np.sqrt(GC_diff[i]**2) >= 10 or 20 > np.sqrt(AT_diff[i]**2) >= 10:
             status = 'warning'
-        elif np.sqrt(GC_diff[i] ** 2) >= 20 or np.sqrt(AT_diff[i] ** 2) >= 20:
+        elif np.sqrt(GC_diff[i]**2) >= 20 or np.sqrt(AT_diff[i]**2) >= 20:
             status = 'fail'
     print(status)
     return status
@@ -207,6 +233,14 @@ def make_report_per_base_sequence_content(sequences, imgname):
 # -----------------------------------------------------------------------------
 # create image and return status
 def make_report_per_sequence_gc_content(sequences, imgname):
+    # preparing data for graphics
+    lines = sequences.seq_mat
+    g_count = np.count_nonzero(lines == ord('G'), axis=1)
+    c_count = np.count_nonzero(lines == ord('C'), axis=1)
+    gc_count = g_count * 100 / lines.shape[1] + c_count * 100 / lines.shape[1]
+
+    gc_mean = np.mean(gc_count)
+    gc_std = np.std(gc_count)
 
     # image creation example
     fig = plt.figure(figsize=(10, 7))
