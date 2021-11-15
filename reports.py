@@ -165,7 +165,8 @@ def make_report_per_base_sequence_content(sequences, imgname):
     g_count = np.count_nonzero(lines == ord('G'), axis=0)
     c_count = np.count_nonzero(lines == ord('C'), axis=0)
     t_count = np.count_nonzero(lines == ord('T'), axis=0)
-    percents = np.vstack([g_count*100/lines.shape[0], a_count*100/lines.shape[0], t_count*100/lines.shape[0], c_count*100/lines.shape[0]])
+    percents = np.vstack([g_count*100/lines.shape[0], a_count*100/lines.shape[0],
+                          t_count*100/lines.shape[0], c_count*100/lines.shape[0]])
 
     # image creation
     fig = plt.figure(figsize=(10, 7))
@@ -196,7 +197,6 @@ def make_report_per_base_sequence_content(sequences, imgname):
                     x_labels.append("")  # empty label
         else:  # xstep > 1
             if ((pos + 1) % 6) == 0:
-            # pair label
                 x_labels.append(str(pos + 1) + '-' + str(pos + 2))
             else:
                 x_labels.append("")  # empty label
