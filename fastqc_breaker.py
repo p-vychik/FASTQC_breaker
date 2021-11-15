@@ -6,6 +6,7 @@ import sequences as sq
 import html_creator
 import reports
 
+
 # -----------------------------------------------------------------------------
 def do_check(input_fastq):
 
