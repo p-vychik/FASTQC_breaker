@@ -205,17 +205,33 @@ def per_sequence_gc_content(sequences, fastq_name, imgname):
 # -----------------------------------------------------------------------------
 # create image and return status
 def per_base_n_content(sequences, fastq_name, imgname):
+    
+    reads = sequences.seq_mat
+    list_of_N_content = [0] * reads.shape[1]
+    for i in range(reads.shape[0]):
+        for j in range(reads.shape[1]):
+            if reads[i][j] == 'N':
+                list_of_N_content[j] += 1
+
+    list_of_N_content = [round(x / reads.shape[1] * 100,3) for x in list_of_N_content]
+
 
     # image creation example
     fig = plt.figure(figsize=(10, 7))
     ax = fig.add_subplot(111)
-    ax.set(title='per_base_n_content(')
+    ax.set(title='Per Base N content', xlabel = 'Position in read(bp)')
+    ax.plot(list_of_N_content,color = 'red')
+    ax.set_ylim(-2,100)
     fig.savefig(imgname)
 
     # define report status
     status = 'good'
-    status = 'warning'
-    status = 'fail'
+
+    if max(list_of_N_content) > 5:
+        status = 'warning'
+    if max(list_of_N_content) > 20:
+        status = 'fail'
+     
     return status
 
 
