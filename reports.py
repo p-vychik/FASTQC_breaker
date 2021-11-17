@@ -205,43 +205,17 @@ def per_sequence_gc_content(sequences, fastq_name, imgname):
 # -----------------------------------------------------------------------------
 # create image and return status
 def per_base_n_content(sequences, fastq_name, imgname):
-    
-    # set 2D array of seq
-    reads = sequences.seq_mat
 
-    # create empty list for future work
-    list_of_N_content = [0] * reads.shape[1]
-    
-    # check if element of read has N base
-    for i in range(reads.shape[0]):
-        for j in range(reads.shape[1]):
-            if reads[i][j] == ord('N'):
-                list_of_N_content[j] += 1
-
-
-    read_len = reads.shape[1]
-    
-    # translate to %
-    list_of_N_content = [((x / read_len) * 100) for x in list_of_N_content]
-
-    # create plot for n base
+    # image creation example
     fig = plt.figure(figsize=(10, 7))
     ax = fig.add_subplot(111)
-    ax.plot(list_of_N_content, color = 'red')
-    ax.set(title='N content across all bases', xlabel = 'Position in read(bp)')
-    ax.set_ylim(-2.0,100.0)
-    ax.text(read_len-3, 97, r'%N', color = 'red')
-    ax.grid(color = 'black', linestyle = '--', linewidth = 0.5)
+    ax.set(title='per_base_n_content(')
     fig.savefig(imgname)
 
     # define report status
     status = 'good'
-
-    if max(list_of_N_content) > 5:
-        status = 'warning'
-    if max(list_of_N_content) > 20:
-        status = 'fail'
-     
+    status = 'warning'
+    status = 'fail'
     return status
 
 
@@ -249,35 +223,11 @@ def per_base_n_content(sequences, fastq_name, imgname):
 # create image and return status
 def sequence_length_distribution(sequences, fastq_name, imgname):
 
-     # set 2D array of seq
-    reads = sequences.seq_mat
-
-    # create empty list for future work
-    des_of_length = np.arange(1, reads.shape[1]+1)
-    length_count = np.zeros(reads.shape[1])
-
-    for i in range(reads.shape[0]):
-        
-        line_read = reads[i,:]
-        # remove empty elements
-        line_read = line_read[line_read >= 0]
-        # add plus 1 in position of length
-        length_count[line_read.size-1] += 1
-
-    where_zero = np.where(length_count == 0.0)
-    des_of_length = np.delete(des_of_length,where_zero)
-    length_count = np.delete(length_count,where_zero) 
-
     # image creation example
     fig = plt.figure(figsize=(10, 7))
-    plt.plot(des_of_length,length_count, color = 'red')
-    plt.grid(axis = 'y')
-    plt.title('Distribution of sequence lengths over all sequences')
-    plt.xlabel('Sequence Length(bp)')
-    plt.text(max(des_of_length)-3,max(length_count)+10,'Sequence Length', color = 'red')
-
-
-    plt.savefig(imgname)
+    ax = fig.add_subplot(111)
+    ax.set(title='sequence_length_distribution')
+    fig.savefig(imgname)
 
     # define report status
     status = 'good'
