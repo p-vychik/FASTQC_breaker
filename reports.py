@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import seaborn as sns
 
 
 # -----------------------------------------------------------------------------
@@ -232,26 +233,118 @@ def make_report_per_base_sequence_content(sequences, imgname):
 
 # -----------------------------------------------------------------------------
 # create image and return status
-def make_report_per_sequence_gc_content(sequences, imgname):
-    # preparing data for graphics
+def make_report_per_base_gc_content(sequences, imgname):
+
     lines = sequences.seq_mat
+
+    # preparing data
+    g_count = np.count_nonzero(lines == ord('G'), axis=0)
+    c_count = np.count_nonzero(lines == ord('C'), axis=0)
+    reads_length = np.count_nonzero(lines != -1, axis=0)
+    gc_count = (g_count+c_count)*100/reads_length
+
+    # image creation
+    fig = plt.figure(figsize=(10, 7))
+    ax = fig.add_subplot(111)
+    ax.set(title='GC content across all bases')
+    xs = range(sequences.max_len)  # max seq len in class sequences
+
+    cnt = 0
+    pos = 0  # position in sequence
+    x_step = 1
+    x_labels = []  # list of labels
+    xlen = lines.shape[1]  # length of reads
+    while pos < xlen:  # iter by position
+        if xlen > 60 and cnt == 9:
+            x_step = 2
+        if x_step == 1:
+            if cnt < 9:
+                x_labels.append(str(pos + 1))
+            else:
+                if (pos % 2) == 0:
+                    x_labels.append(str(pos + 1))
+                else:
+                    x_labels.append("")  # empty label
+        else:  # xstep > 1
+            if ((pos + 1) % 6) == 0:
+                # pair label
+                x_labels.append(str(pos + 1) + '-' + str(pos + 2))
+            else:
+                x_labels.append("")  # empty label
+        pos += 1
+        cnt += 1
+
+    ax.plot(xs, gc_count, label='%GC', color='r')
+    ax.set_xlim([1, lines.shape[1] + 1])
+    ax.set_xticks(range(1, lines.shape[1] + 1, 1))
+    ax.set_xticklabels(x_labels)
+    ax.set_yticks(range(0, 110, 10))
+    ax.set_ylim([0.0, 100.0])
+    plt.legend()
+    ax.grid()
+
+    fig.savefig(imgname)
+
+    # define status
+    gc_mean = np.mean(gc_count)
+    status = 'good'
+    for i in gc_count:
+        if 5 <= np.abs(i-gc_mean) <= 10:
+            status = 'warning'
+        elif np.abs(i-gc_mean) < 30:
+            status = 'fail'
+        return status
+
+
+# -----------------------------------------------------------------------------
+# create image and return status
+def make_report_per_sequence_gc_content(sequences, imgname):
+
+    lines = sequences.seq_mat
+
+    # preparing data
     g_count = np.count_nonzero(lines == ord('G'), axis=1)
     c_count = np.count_nonzero(lines == ord('C'), axis=1)
-    gc_count = g_count * 100 / lines.shape[1] + c_count * 100 / lines.shape[1]
+    reads_length = np.count_nonzero(lines != -1, axis=1)
+    gc_count = (g_count + c_count) * 100 / reads_length
 
     gc_mean = np.mean(gc_count)
     gc_std = np.std(gc_count)
+    gc_theor = np.random.normal(loc=gc_mean, scale=gc_std, size=lines.shape[0])
 
-    # image creation example
+    # image creation
     fig = plt.figure(figsize=(10, 7))
     ax = fig.add_subplot(111)
-    ax.set(title='per_sequence_gc_content')
+    ax.set(title='GC distribution over all sequences')
+    sns.set_style('whitegrid')
+    sns.kdeplot(gc_count, color="red", label='GC count per read', bw_adjust=1.5)
+    sns.kdeplot(gc_theor, color='blue', label='Theoretical Distribution', bw_adjust=1.5)
+    ax.set_xticks(range(0, lines.shape[1], 1))
+    x_labels = []
+    for i in range(lines.shape[1]):
+        if i % 5 == 0:
+            x_labels.append(i)
+        else:
+            x_labels.append('')
+    ax.set_xticklabels(x_labels)
+    plt.xlabel("Mean GC content (%)")
+    plt.ylabel("")
+    plt.legend()
+    ax.grid()
     fig.savefig(imgname)
 
     # define report status
+    dev_percent = 0
+    theor = 0
+    for i in range(gc_count.shape[0]):
+        theor += gc_count[i]
+        dev_percent += np.abs(gc_count[i] - gc_theor[i])
+    dev_percent = (dev_percent / theor) * 100
     status = 'good'
-    status = 'warning'
-    status = 'fail'
+    if 15 <= dev_percent < 30:
+        status = 'warning'
+    elif dev_percent < 30:
+        status = 'fail'
     return status
 
 
