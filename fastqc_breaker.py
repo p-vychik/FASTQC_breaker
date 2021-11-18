@@ -103,7 +103,7 @@ def do_check(input_fastq):
 
     # Per base N content
     img = './Report/per_base_n_content.png'
-    status = reports.make_report_per_base_n_content(sequences, img)
+    status = reports.per_base_n_content(sequences, input_fastq, img)
     tm8 = time.time()
     print(f'8.  make_report_per_base_n_content:      {(tm8 - tm7):.3f} sec')
     html.replace_words({'PER_BASE_N_CONTENT_status': status})
