@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy import stats
 
 
 # -----------------------------------------------------------------------------
@@ -20,6 +21,7 @@ def basic_statistics(sequences, fastq_name):
 
 # -----------------------------------------------------------------------------
 # create image and return status
+
 def per_base_sequence_quality(sequences, fastq_name, imgname):
 
     # Creating dataset
@@ -117,6 +119,7 @@ def per_base_sequence_quality(sequences, fastq_name, imgname):
 
 # -----------------------------------------------------------------------------
 # create image and return status
+
 def per_sequence_quality_scores(sequences, fastq_name, imgname):
 
     fig = plt.figure(figsize=(10, 7))
@@ -159,36 +162,197 @@ def per_sequence_quality_scores(sequences, fastq_name, imgname):
 
 # -----------------------------------------------------------------------------
 # create image and return status
-def per_base_sequence_content(sequences, fastq_name, imgname):
 
-    # image creation example
+def make_report_per_base_sequence_content(sequences, imgname):
+    lines = sequences.seq_mat
+    a_count = np.count_nonzero(lines == ord('A'), axis=0)
+    g_count = np.count_nonzero(lines == ord('G'), axis=0)
+    c_count = np.count_nonzero(lines == ord('C'), axis=0)
+    t_count = np.count_nonzero(lines == ord('T'), axis=0)
+    percents = np.vstack([g_count*100/lines.shape[0], a_count*100/lines.shape[0],
+                          t_count*100/lines.shape[0], c_count*100/lines.shape[0]])
+
+    # image creation
     fig = plt.figure(figsize=(10, 7))
     ax = fig.add_subplot(111)
-    ax.set(title='per_base_sequence_content')
+    ax.set(title='Sequence content across all bases', xlabel='Position in read (bp)')
+    xs = range(sequences.max_len)  # max seq len in class sequences
+    ys1 = percents[0]  # g
+    ys2 = percents[1]  # a
+    ys3 = percents[2]  # t
+    ys4 = percents[3]  # c
+
+    # add pretty x-labels, make low density to be readable
+    cnt = 0
+    pos = 0  # position in sequence
+    x_step = 1
+    x_labels = []  # list of labels
+    xlen = lines.shape[1]  # length of reads
+    while pos < xlen:  # iter by position
+        if xlen > 60 and cnt == 9:
+            x_step = 2
+        if x_step == 1:
+            if cnt < 9:
+                x_labels.append(str(pos + 1))
+            else:
+                if ((pos) % 2) == 0:
+                    x_labels.append(str(pos + 1))
+                else:
+                    x_labels.append("")  # empty label
+        else:  # xstep > 1
+            if ((pos + 1) % 6) == 0:
+                x_labels.append(str(pos + 1) + '-' + str(pos + 2))
+            else:
+                x_labels.append("")  # empty label
+        pos += 1
+        cnt += 1
+
+    ax.plot(xs, ys1, label='%G', color='r')
+    ax.plot(xs, ys2, label='%A', color='blue')
+    ax.plot(xs, ys3, label='%T', color='black')
+    ax.plot(xs, ys4, label='%C', color='lime')
+    ax.set_xlim([1, lines.shape[1] + 1])
+    ax.set_xticks(range(1, lines.shape[1]+1, 1))
+    ax.set_xticklabels(x_labels)
+    ax.set_yticks(range(0, 110, 10))
+    ax.set_ylim([0.0, 100.0])
+    plt.legend()
+    ax.grid()
+
     fig.savefig(imgname)
 
     # define report status
+    GC_diff = percents[0] - percents[3]
+    AT_diff = percents[1] - percents[2]
     status = 'good'
-    status = 'warning'
-    status = 'fail'
-
+    for i in range((GC_diff.shape[0])):
+        if 20 > np.sqrt(GC_diff[i]**2) >= 10 or 20 > np.sqrt(AT_diff[i]**2) >= 10:
+            status = 'warning'
+        elif np.sqrt(GC_diff[i]**2) >= 20 or np.sqrt(AT_diff[i]**2) >= 20:
+            status = 'fail'
+    print(status)
     return status
 
 
 # -----------------------------------------------------------------------------
 # create image and return status
-def per_sequence_gc_content(sequences, fastq_name, imgname):
+def make_report_per_base_gc_content(sequences, imgname):
 
-    # image creation example
+    lines = sequences.seq_mat
+
+    # preparing data
+    g_count = np.count_nonzero(lines == ord('G'), axis=0)
+    c_count = np.count_nonzero(lines == ord('C'), axis=0)
+    reads_length = np.count_nonzero(lines != -1, axis=0)
+    gc_count = (g_count+c_count)*100/reads_length
+
+    # image creation
     fig = plt.figure(figsize=(10, 7))
     ax = fig.add_subplot(111)
-    ax.set(title='per_sequence_gc_content')
+    ax.set(title='GC content across all bases')
+    xs = range(sequences.max_len)  # max seq len in class sequences
+
+    cnt = 0
+    pos = 0  # position in sequence
+    x_step = 1
+    x_labels = []  # list of labels
+    xlen = lines.shape[1]  # length of reads
+    while pos < xlen:  # iter by position
+        if xlen > 60 and cnt == 9:
+            x_step = 2
+        if x_step == 1:
+            if cnt < 9:
+                x_labels.append(str(pos + 1))
+            else:
+                if (pos % 2) == 0:
+                    x_labels.append(str(pos + 1))
+                else:
+                    x_labels.append("")  # empty label
+        else:  # xstep > 1
+            if ((pos + 1) % 6) == 0:
+                # pair label
+                x_labels.append(str(pos + 1) + '-' + str(pos + 2))
+            else:
+                x_labels.append("")  # empty label
+        pos += 1
+        cnt += 1
+
+    ax.plot(xs, gc_count, label='%GC', color='r')
+    ax.set_xlim([1, lines.shape[1] + 1])
+    ax.set_xticks(range(1, lines.shape[1] + 1, 1))
+    ax.set_xticklabels(x_labels)
+    ax.set_yticks(range(0, 110, 10))
+    ax.set_ylim([0.0, 100.0])
+    plt.legend()
+    ax.grid()
+
+    fig.savefig(imgname)
+
+    # define status
+    gc_mean = np.mean(gc_count)
+    status = 'good'
+    for i in gc_count:
+        if 5 <= np.abs(i-gc_mean) <= 10:
+            status = 'warning'
+        elif np.abs(i-gc_mean) < 30:
+            status = 'fail'
+        return status
+
+
+# -----------------------------------------------------------------------------
+# create image and return status
+def make_report_per_sequence_gc_content(sequences, imgname):
+
+    lines = sequences.seq_mat
+
+    # preparing data
+    g_count = np.count_nonzero(lines == ord('G'), axis=1)
+    c_count = np.count_nonzero(lines == ord('C'), axis=1)
+    reads_length = np.count_nonzero(lines != -1, axis=1)
+    gc_count = (g_count + c_count) * 100 / reads_length
+
+    gc_mean = np.mean(gc_count)
+    gc_std = np.std(gc_count)
+    gc_theor = np.random.normal(loc=gc_mean, scale=gc_std, size=lines.shape[0])
+
+    # image creation
+    fig = plt.figure(figsize=(10, 7))
+    ax = fig.add_subplot(111)
+    ax.set(title='GC distribution over all sequences')
+    bins = np.linspace(0, lines.shape[1], lines.shape[1])
+    gc_count_kernel = stats.gaussian_kde(gc_count)
+    gc_count_curve = gc_count_kernel(bins) * gc_count.shape[0]
+    gc_theor_kernel = stats.gaussian_kde(gc_theor)
+    gc_theor_curve = gc_theor_kernel(bins) * gc_count.shape[0]
+
+    ax.plot(bins, gc_count_curve, color="red", label='GC count per read')
+    ax.plot(bins, gc_theor_curve, color="blue", label='Theoretical Distribution')
+    plt.legend()
+
+    ax.set_xticks(range(0, lines.shape[1], 1))
+    x_labels = []
+    for i in range(lines.shape[1]):
+        if i % 5 == 0:
+            x_labels.append(i)
+        else:
+            x_labels.append('')
+    ax.set_xticklabels(x_labels)
+    plt.xlabel("Mean GC content (%)")
+    plt.grid()
     fig.savefig(imgname)
 
     # define report status
+    dev_percent = 0
+    theor = 0
+    for i in range(gc_count.shape[0]):
+        theor += gc_count[i]
+        dev_percent += np.abs(gc_count[i] - gc_theor[i])
+    dev_percent = (dev_percent / theor) * 100
     status = 'good'
-    status = 'warning'
-    status = 'fail'
+    if 15 <= dev_percent < 30:
+        status = 'warning'
+    elif dev_percent < 30:
+        status = 'fail'
     return status
 
 

@@ -82,23 +82,30 @@ def do_check(input_fastq):
 
     # Per base sequence content
     img = './Report/per_base_sequence_content.png'
-    status = reports.per_base_sequence_content(sequences, input_fastq, img)
+    status = reports.make_report_per_base_sequence_content(sequences, img)
     tm6 = time.time()
-    print(f'5.  per_base_seq_content:       {(tm6 - tm5):.3f} sec')
+    print(f'5.  make_report_per_base_seq_content:    {(tm6 - tm5):.3f} sec')
     html.replace_words({'PER_BASE_SEQUENCE_CONTENT_status': status})
+
+    # Per base GC content
+    img = './Report/per_base_gc_content.png'
+    status = reports.make_report_per_base_gc_content(sequences, img)
+    tm7 = time.time()
+    print(f'6.  make_report_per_base_gc_content: {(tm7 - tm6):.3f} sec')
+    html.replace_words({'PER_BASE_GC_CONTENT_status': status})
 
     # Per sequence GC content
     img = './Report/per_sequence_gc_content.png'
-    status = reports.per_sequence_gc_content(sequences, input_fastq, img)
+    status = reports.make_report_per_sequence_gc_content(sequences, img)
     tm7 = time.time()
-    print(f'6.  per_sequence_gc_content:    {(tm7 - tm6):.3f} sec')
+    print(f'7.  make_report_per_sequence_gc_content: {(tm7 - tm6):.3f} sec')
     html.replace_words({'PER_SEQUENCE_GC_CONTENT_status': status})
 
     # Per base N content
     img = './Report/per_base_n_content.png'
-    status = reports.per_base_n_content(sequences, input_fastq, img)
+    status = reports.make_report_per_base_n_content(sequences, img)
     tm8 = time.time()
-    print(f'7.  per_base_n_content:         {(tm8 - tm7):.3f} sec')
+    print(f'8.  make_report_per_base_n_content:      {(tm8 - tm7):.3f} sec')
     html.replace_words({'PER_BASE_N_CONTENT_status': status})
 
     # Sequence Length Distribution
