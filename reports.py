@@ -1,7 +1,7 @@
 import math
 import numpy as np
 import matplotlib.pyplot as plt
-
+import seaborn as sns
 
 # -----------------------------------------------------------------------------
 def basic_statistics(sequences, fastq_name):
@@ -224,10 +224,10 @@ def per_sequence_gc_content(sequences, fastq_name, imgname):
 def per_base_n_content(sequences, fastq_name, imgname):
     # set 2D array of seq
     reads = sequences.seq_mat
-    # create empty list for future work
-    list_of_N_content = np,count_nonzero(reads == ord('N'), axis = 0)
+    # create list with N bases
+    list_of_N_content = np.count_nonzero(reads == ord('N'), axis = 0)
     # translate to %
-    list_of_N_content = list_of_N_content * 100 / reads.shape[1] 
+    list_of_N_content = list_of_N_content * 100 / reads.shape[1]
     # create plot for n base
     fig = plt.figure(figsize=(10, 7))
     ax = fig.add_subplot(111)
@@ -240,12 +240,10 @@ def per_base_n_content(sequences, fastq_name, imgname):
 
     # define report status
     status = 'good'
-
     if max(list_of_N_content) > 5:
         status = 'warning'
     if max(list_of_N_content) > 20:
         status = 'fail'
-     
     return status
 
 
@@ -257,8 +255,8 @@ def sequence_length_distribution(sequences, fastq_name, imgname):
     reads = sequences.seq_mat
 
     # create empty list for future work
-    des_of_length = np.arange(1, reads.shape[1]+1)
-    length_count = np.zeros(reads.shape[1])
+    #des_of_length = np.arange(1, reads.shape[1]+1)
+    length_count = [0] * reads.shape[0]
 
     for i in range(reads.shape[0]):
         
@@ -266,27 +264,29 @@ def sequence_length_distribution(sequences, fastq_name, imgname):
         # remove empty elements
         line_read = line_read[line_read >= 0]
         # add plus 1 in position of length
-        length_count[line_read.size-1] += 1
-
-    where_zero = np.where(length_count == 0.0)
-    des_of_length = np.delete(des_of_length,where_zero)
-    length_count = np.delete(length_count,where_zero) 
-
+        length_count[i] += line_read.size
+    
+    mi_len = min(length_count)
+    ma_len = max(length_count)
     # image creation example
     fig = plt.figure(figsize=(10, 7))
-    plt.plot(des_of_length,length_count, color = 'red')
-    plt.grid(axis = 'y')
-    plt.title('Distribution of sequence lengths over all sequences')
-    plt.xlabel('Sequence Length(bp)')
-    plt.text(max(des_of_length)-3,max(length_count)+10,'Sequence Length', color = 'red')
+    ax = fig.add_subplot(111)
+    ax.hist(length_count, color = 'red', align = 'left')
+    ax.set_xticks([mi_len - 1, max(set(length_count), key=length_count.count), max(length_count) + 1])
+    ax.grid(axis = 'y')
+    ax.set(title = 'Distribution of sequence lengths over all sequences', xlabel = 'Sequence Length(bp)')
+    
 
 
     plt.savefig(imgname)
 
     # define report status
     status = 'good'
-    status = 'warning'
-    status = 'fail'
+    if 0 in length_count:    
+        status = 'fail'
+    elif min(length_count) != max(length_count):
+        status = 'warning'
+    
     return status
 
 # -----------------------------------------------------------------------------
