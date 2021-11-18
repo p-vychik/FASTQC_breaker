@@ -299,7 +299,6 @@ def make_report_per_base_gc_content(sequences, imgname):
         return status
 
 
-
 # -----------------------------------------------------------------------------
 # create image and return status
 def make_report_per_sequence_gc_content(sequences, imgname):
