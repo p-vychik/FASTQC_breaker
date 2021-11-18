@@ -23,14 +23,10 @@ def do_check(input_fastq):
     max_seq_len = 0
     for i in range(read_num):
         l2 = lines[i * 4 + 1].strip()
-        if max_seq_len < len(l2):
-            max_seq_len = len(l2)
-
+        max_seq_len = max(max_seq_len, len(l2))
     # print(f'max_seq_len:  {max_seq_len}')
-    tm1 = time.time()
-    read_num = int(len(lines) / 4)
 
-    # allocate Sequence for 'read_num' and 'max_seq_len'
+    # allocate Sequences for 'read_num' and 'max_seq_len'
     sequences = sq.Sequences(max_seq_len, read_num)
 
     print('Parse file:')
@@ -56,7 +52,7 @@ def do_check(input_fastq):
 
     # sequences.print()
     tm2 = time.time()
-    print(f'1.  parse file:                          {(tm2 - tm1):.3f} sec')
+    print(f'1.  parse file:                 {(tm2 - tm1):.3f} sec')
 
     # Make reports
 
@@ -64,23 +60,23 @@ def do_check(input_fastq):
     html.replace_words({'FASTQ_FILE_NAME': input_fastq})
 
     # Basic Statistics
-    words = reports.make_report_basic_statistics(sequences, input_fastq)
+    words = reports.basic_statistics(sequences, input_fastq)
     tm3 = time.time()
-    print(f'2.  make_report_basic_statistics:        {(tm3 - tm2):.3f} sec')
+    print(f'2.  basic_statistics:           {(tm3 - tm2):.3f} sec')
     html.replace_words(words)
 
     # Per base sequence quality
     img = './Report/per_base_sequence_quality.png'
-    status = reports.make_report_per_base_sequence_quality(sequences, img)
+    status = reports.per_base_sequence_quality(sequences, input_fastq, img)
     tm4 = time.time()
-    print(f'3.  make_report_per_base_seq_quality:    {(tm4 - tm3):.3f} sec')
+    print(f'3.  per_base_seq_quality:       {(tm4 - tm3):.3f} sec')
     html.replace_words({'PER_BASE_SEQUENCE_QUALITY_status': status})
 
     # Per sequence quality scores
     img = './Report/per_sequence_quality_scores.png'
-    status = reports.make_report_per_sequence_quality_scores(sequences, img)
+    status = reports.per_sequence_quality_scores(sequences, input_fastq, img)
     tm5 = time.time()
-    print(f'4.  make_report_per_base_seq_quality:    {(tm5 - tm4):.3f} sec')
+    print(f'4.  per_base_seq_quality:       {(tm5 - tm4):.3f} sec')
     html.replace_words({'PER_SEQUENCE_QUALITY_SCORES_status': status})
 
     # Per base sequence content
@@ -113,36 +109,36 @@ def do_check(input_fastq):
 
     # Sequence Length Distribution
     img = './Report/sequence_length_distribution.png'
-    status = reports.make_report_sequence_length_distribution(sequences, img)
+    status = reports.sequence_length_distribution(sequences, input_fastq, img)
     tm9 = time.time()
-    print(f'9.  make_report_seq_length_distribution: {(tm9 - tm8):.3f} sec')
+    print(f'8.  seq_length_distribution:    {(tm9 - tm8):.3f} sec')
     html.replace_words({'SEQUENCE_LENGTH_DISTRIBUTION_status': status})
 
     # Sequence Duplication Levels
     img = './Report/sequence_duplication_levels.png'
-    status = reports.make_report_sequence_duplication_levels(sequences, img)
+    status = reports.sequence_duplication_levels(sequences, input_fastq, img)
     tm10 = time.time()
-    print(f'10.  make_report_seq_duplication_levels:  {(tm10 - tm9):.3f} sec')
+    print(f'9.  seq_duplication_levels:     {(tm10 - tm9):.3f} sec')
     html.replace_words({'SEQUENCE_DUPLICATION_LEVELS_status': status})
 
     # Overrepresented sequences
     img = './Report/overrepresented_sequences.png'
-    status = reports.make_report_overrepresented_sequences(sequences, img)
+    status = reports.overrepresented_sequences(sequences, input_fastq, img)
     tm11 = time.time()
-    print(f'11. overrepresented_sequences:           {(tm11 - tm10):.3f} sec')
+    print(f'10. overrepresented_sequences:  {(tm11 - tm10):.3f} sec')
     html.replace_words({'OVERREPRESENTED_SEQUENCES_status': status})
 
     # Adapter Content
     img = './Report/adapter_content.png'
-    status = reports.make_report_adapter_content(sequences, img)
+    status = reports.adapter_content(sequences, input_fastq, img)
     tm12 = time.time()
-    print(f'12. make_report_adapter_content:         {(tm12 - tm11):.3f} sec')
+    print(f'11. adapter_content:            {(tm12 - tm11):.3f} sec')
     html.replace_words({'ADAPTER_CONTENT_status': status})
 
     # generate html report
     rep_name = './Report/report.html'
     html.make_report(rep_name)
-    print(f'13. rtport created:                      {rep_name}')
+    print(f'12. report created:             {rep_name}')
 
     # close files
     fi.close()
@@ -153,10 +149,11 @@ def do_check(input_fastq):
 def main():
 
     if len(sys.argv) < 2:
-        print(f'USE:  {sys.argv[0]} <fasrq-file-name>')
+        print(f'USE:  {sys.argv[0]} <fastq-file-name>')
+        sys.exit(-1)  # exit programm with error code
 
     try:
-        shutil.rmtree('./Report')
+        shutil.rmtree('./Report')  # del dir with content
     except FileNotFoundError:
         print(end='')  # ignore, do nothing
     os.mkdir('./Report')
@@ -164,7 +161,7 @@ def main():
     shutil.copyfile('Html/warning.png', 'Report/warning.png')
     shutil.copyfile('Html/fail.png',    'Report/fail.png')
 
-    # do filter and write result files
+    # read file and create reports as html
     do_check(sys.argv[1])
 
 

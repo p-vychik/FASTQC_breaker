@@ -4,11 +4,11 @@ from scipy import stats
 
 
 # -----------------------------------------------------------------------------
-def make_report_basic_statistics(sequences, filename):
+def basic_statistics(sequences, fastq_name):
 
     # words to replace in html report
     words = {
-        'BASIC_STATISTICS_filename':        filename,
+        'BASIC_STATISTICS_filename':        fastq_name,
         'BASIC_STATISTICS_file_type':       'set here filetype',
         'BASIC_STATISTICS_encoding':        'set here encoding',
         'BASIC_STATISTICS_total_sequences': 'set here total seqs num',
@@ -21,7 +21,8 @@ def make_report_basic_statistics(sequences, filename):
 
 # -----------------------------------------------------------------------------
 # create image and return status
-def make_report_per_base_sequence_quality(sequences, imgname):
+
+def per_base_sequence_quality(sequences, fastq_name, imgname):
 
     # Creating dataset
     # go by positions
@@ -118,7 +119,8 @@ def make_report_per_base_sequence_quality(sequences, imgname):
 
 # -----------------------------------------------------------------------------
 # create image and return status
-def make_report_per_sequence_quality_scores(sequences, imgname):
+
+def per_sequence_quality_scores(sequences, fastq_name, imgname):
 
     fig = plt.figure(figsize=(10, 7))
     ax = fig.add_subplot(111)
@@ -160,6 +162,7 @@ def make_report_per_sequence_quality_scores(sequences, imgname):
 
 # -----------------------------------------------------------------------------
 # create image and return status
+
 def make_report_per_base_sequence_content(sequences, imgname):
     lines = sequences.seq_mat
     a_count = np.count_nonzero(lines == ord('A'), axis=0)
@@ -296,6 +299,7 @@ def make_report_per_base_gc_content(sequences, imgname):
         return status
 
 
+
 # -----------------------------------------------------------------------------
 # create image and return status
 def make_report_per_sequence_gc_content(sequences, imgname):
@@ -355,7 +359,7 @@ def make_report_per_sequence_gc_content(sequences, imgname):
 
 # -----------------------------------------------------------------------------
 # create image and return status
-def make_report_per_base_n_content(sequences, imgname):
+def per_base_n_content(sequences, fastq_name, imgname):
 
     # image creation example
     fig = plt.figure(figsize=(10, 7))
@@ -372,7 +376,7 @@ def make_report_per_base_n_content(sequences, imgname):
 
 # -----------------------------------------------------------------------------
 # create image and return status
-def make_report_sequence_length_distribution(sequences, imgname):
+def sequence_length_distribution(sequences, fastq_name, imgname):
 
     # image creation example
     fig = plt.figure(figsize=(10, 7))
@@ -389,7 +393,7 @@ def make_report_sequence_length_distribution(sequences, imgname):
 
 # -----------------------------------------------------------------------------
 # create image and return status
-def make_report_sequence_duplication_levels(sequences, imgname):
+def sequence_duplication_levels(sequences, fastq_name, imgname):
 
     # image creation example
     fig = plt.figure(figsize=(10, 7))
@@ -406,7 +410,7 @@ def make_report_sequence_duplication_levels(sequences, imgname):
 
 # -----------------------------------------------------------------------------
 # create image and return status
-def make_report_overrepresented_sequences(sequences, imgname):
+def overrepresented_sequences(sequences, fastq_name, imgname):
 
     # image creation example
     fig = plt.figure(figsize=(10, 7))
@@ -423,7 +427,7 @@ def make_report_overrepresented_sequences(sequences, imgname):
 
 # -----------------------------------------------------------------------------
 # create image and return status
-def make_report_adapter_content(sequences, imgname):
+def adapter_content(sequences, fastq_name, imgname):
 
     # image creation example
     fig = plt.figure(figsize=(10, 7))

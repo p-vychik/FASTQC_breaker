@@ -56,7 +56,7 @@ class Sequences:
             tile = int(descr_line.split(sep=':')[4])
             self.tile_arr[idx] = tile
         # make matrix of ascii
-        if 1:  # I don't need seq yet
+        if 1: 
             lst = [ord(ch) for ch in seq_line]
             for i in range(sl, self.max_len):
                 lst.append(-1)
