@@ -1,7 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import seaborn as sns
-
+from scipy import stats
 
 # -----------------------------------------------------------------------------
 def make_report_basic_statistics(sequences, filename):
@@ -316,9 +315,16 @@ def make_report_per_sequence_gc_content(sequences, imgname):
     fig = plt.figure(figsize=(10, 7))
     ax = fig.add_subplot(111)
     ax.set(title='GC distribution over all sequences')
-    sns.set_style('whitegrid')
-    sns.kdeplot(gc_count, color="red", label='GC count per read', bw_adjust=1.5)
-    sns.kdeplot(gc_theor, color='blue', label='Theoretical Distribution', bw_adjust=1.5)
+    bins = np.linspace(0, lines.shape[1], lines.shape[1])
+    gc_count_kernel = stats.gaussian_kde(gc_count)
+    gc_count_curve = gc_count_kernel(bins) * gc_count.shape[0]
+    gc_theor_kernel = stats.gaussian_kde(gc_theor)
+    gc_theor_curve = gc_theor_kernel(bins) * gc_count.shape[0]
+
+    ax.plot(bins, gc_count_curve, color="red", label='GC count per read')
+    ax.plot(bins, gc_theor_curve, color="blue", label='Theoretical Distribution')
+    plt.legend()
+
     ax.set_xticks(range(0, lines.shape[1], 1))
     x_labels = []
     for i in range(lines.shape[1]):
@@ -328,9 +334,7 @@ def make_report_per_sequence_gc_content(sequences, imgname):
             x_labels.append('')
     ax.set_xticklabels(x_labels)
     plt.xlabel("Mean GC content (%)")
-    plt.ylabel("")
-    plt.legend()
-    ax.grid()
+    plt.grid()
     fig.savefig(imgname)
 
     # define report status
