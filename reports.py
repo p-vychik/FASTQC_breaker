@@ -1,3 +1,4 @@
+import math
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -25,8 +26,8 @@ def per_base_sequence_quality(sequences, fastq_name, imgname):
     # Creating dataset
     # go by positions
     all_quals = []
-    cnt = 0  # number of data set for one boxplot
-    pos = 0  # position in sequence
+    bp_cnt = 0  # number of boxplot
+    pos = 0     # position in sequence
     x_step = 1
     x_labels = []
     mean_line_x = []
@@ -36,12 +37,15 @@ def per_base_sequence_quality(sequences, fastq_name, imgname):
     qual_for_base_mat = sequences.get_transpose_qual_matrix()
     xlen = qual_for_base_mat.shape[0]
     while 1:
-        if xlen > 60 and cnt == 9:
-            x_step = 2
+        if xlen > 60 and bp_cnt == 9:
+            # make groups - only 50 boxplots on X axis for x > 10
+            x_step = math.ceil((xlen - 10) / 50)
         # combine x_step lines together
         quals = np.zeros(0, dtype=np.int8)
         for k in range(x_step - 0):
             idx = pos + 0 + k
+            if idx >= xlen:
+                break
             arr = qual_for_base_mat[idx, :]
             # arr can have '-1' elements at the end, remove them
             arr = arr[arr >= 0]
@@ -49,11 +53,11 @@ def per_base_sequence_quality(sequences, fastq_name, imgname):
                 quals = np.concatenate((quals, arr))
         # save
         all_quals.append(quals)
-        mean_line_x.append(cnt + 1)
+        mean_line_x.append(bp_cnt + 1)
         mean_line_y.append(sum(quals) / len(quals))
         # add pretty x-labels, make low density to be readable
         if x_step == 1:
-            if cnt < 9:
+            if bp_cnt < 9:
                 x_labels.append(str(pos + 1))
             else:
                 if ((pos) % 2) == 0:
@@ -61,13 +65,19 @@ def per_base_sequence_quality(sequences, fastq_name, imgname):
                 else:
                     x_labels.append("")  # empty label
         else:  # xstep > 1
-            if ((pos+1) % 6) == 0:
+            bp_offset = 2
+            density = 4                  # print label each 'density' boxplot
+            if xlen > 100:
+                density = 5
+            if ((bp_cnt + bp_offset) % density) == 0:
                 # pair label
-                x_labels.append(str(pos + 1) + '-' + str(pos + 2))
+                first_num = pos + 1
+                second_num = min(pos + x_step, xlen)
+                x_labels.append(str(first_num) + '-' + str(second_num))
             else:
-                x_labels.append("")  # empty label
+                x_labels.append("")      # empty label
         pos += x_step
-        cnt += 1
+        bp_cnt += 1
         if pos >= xlen:
             break
 
