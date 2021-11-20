@@ -26,10 +26,13 @@ The program is written and tested in Python 3.9
 2. Install nessesary requirements using next command:  
 ``` pip3 instal -r requirements.txt ```
 3. To run program use this:  
-``` python fastqc_breaker.py example.fastq ```  
-Put a path to your fastq file instead of `example.fastq`.
+``` fastqc_breaker.py -i <fastq-file-name> -o <fastq-file-name> ```  
 
-The program creates a `Report` folder. In there you will find `report.html` and separate pictures for each graphic.
+    where:  
+    `<fastq-file-name>` - input file (with path if it is nessesary)  
+    `<fastq-file-name>` - name of directory for output
+
+The program creates a folder where you will find `report.html` and separate pictures for each graphic.
 
 Our program was succesfully tested on the next OSs:
 - Linux Mint 20.2
