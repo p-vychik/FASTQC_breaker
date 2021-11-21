@@ -189,22 +189,6 @@ def per_sequence_gc_content(sequences, fastq_name, imgname):
 
 # -----------------------------------------------------------------------------
 # create image and return status
-def per_sequence_gc_content(sequences, fastq_name, imgname):
-    # image creation example
-    fig = plt.figure(figsize=(10, 7))
-    ax = fig.add_subplot(111)
-    ax.set(title='per_sequence_gc_content')
-    fig.savefig(imgname)
-
-    # define report status
-    status = 'good'
-    status = 'warning'
-    status = 'fail'
-    return status
-
-
-# -----------------------------------------------------------------------------
-# create image and return status
 def per_base_n_content(sequences, fastq_name, imgname):
     # set 2D array of seq
     reads = sequences.seq_mat
