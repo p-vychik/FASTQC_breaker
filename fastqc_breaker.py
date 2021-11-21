@@ -76,7 +76,7 @@ def do_check(input_fastq, output_dir):
     img = output_dir + '/per_sequence_quality_scores.png'
     status = reports.per_sequence_quality_scores(sequences, input_fastq, img)
     tm5 = time.time()
-    print(f'4.  per_base_seq_quality:       {(tm5 - tm4):.3f} sec')
+    print(f'4.  per_seq_quality_scores:       {(tm5 - tm4):.3f} sec')
     html.replace_words({'PER_SEQUENCE_QUALITY_SCORES_status': status})
 
     # Per base sequence content
@@ -90,55 +90,55 @@ def do_check(input_fastq, output_dir):
     img = output_dir + '/per_base_gc_content.png'
     status = reports.per_base_gc_content(sequences, input_fastq, img)
     tm6 = time.time()
-    print(f'5.  per_base_gc_content:        {(tm6 - tm5):.3f} sec')
+    print(f'6.  per_base_gc_content:        {(tm6 - tm5):.3f} sec')
     html.replace_words({'PER_BASE_GC_CONTENT_status': status})
 
     # Per sequence GC content
     img = output_dir + '/per_sequence_gc_content.png'
     status = reports.per_sequence_gc_content(sequences, input_fastq, img)
     tm7 = time.time()
-    print(f'6.  per_sequence_gc_content:    {(tm7 - tm6):.3f} sec')
+    print(f'7.  per_sequence_gc_content:    {(tm7 - tm6):.3f} sec')
     html.replace_words({'PER_SEQUENCE_GC_CONTENT_status': status})
 
     # Per base N content
     img = output_dir + '/per_base_n_content.png'
     status = reports.per_base_n_content(sequences, input_fastq, img)
     tm8 = time.time()
-    print(f'7.  per_base_n_content:         {(tm8 - tm7):.3f} sec')
+    print(f'8.  per_base_n_content:         {(tm8 - tm7):.3f} sec')
     html.replace_words({'PER_BASE_N_CONTENT_status': status})
 
     # Sequence Length Distribution
     img = output_dir + '/sequence_length_distribution.png'
     status = reports.sequence_length_distribution(sequences, input_fastq, img)
     tm9 = time.time()
-    print(f'8.  seq_length_distribution:    {(tm9 - tm8):.3f} sec')
+    print(f'9.  seq_length_distribution:    {(tm9 - tm8):.3f} sec')
     html.replace_words({'SEQUENCE_LENGTH_DISTRIBUTION_status': status})
 
     # Sequence Duplication Levels
     img = output_dir + '/sequence_duplication_levels.png'
     status = reports.sequence_duplication_levels(sequences, input_fastq, img)
     tm10 = time.time()
-    print(f'9.  seq_duplication_levels:     {(tm10 - tm9):.3f} sec')
+    print(f'10.  seq_duplication_levels:     {(tm10 - tm9):.3f} sec')
     html.replace_words({'SEQUENCE_DUPLICATION_LEVELS_status': status})
 
     # Overrepresented sequences
     img = output_dir + '/overrepresented_sequences.png'
     status = reports.overrepresented_sequences(sequences, input_fastq, img)
     tm11 = time.time()
-    print(f'10. overrepresented_sequences:  {(tm11 - tm10):.3f} sec')
+    print(f'11. overrepresented_sequences:  {(tm11 - tm10):.3f} sec')
     html.replace_words({'OVERREPRESENTED_SEQUENCES_status': status})
 
     # Adapter Content
     img = output_dir + '/adapter_content.png'
     status = reports.adapter_content(sequences, input_fastq, img)
     tm12 = time.time()
-    print(f'11. adapter_content:            {(tm12 - tm11):.3f} sec')
+    print(f'12. adapter_content:            {(tm12 - tm11):.3f} sec')
     html.replace_words({'ADAPTER_CONTENT_status': status})
 
     # generate html report
     rep_name = output_dir + '/report.html'
     html.make_report(rep_name)
-    print(f'12. report created:             {rep_name}')
+    print(f'13. report created:             {rep_name}')
 
     # close files
     fi.close()

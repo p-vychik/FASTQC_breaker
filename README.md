@@ -24,7 +24,7 @@ The program is written and tested in Python 3.9
 
 1. Clone this repository using `git clone` command
 2. Install necessary requirements using next command:  
-``` pip3 instal -r requirements.txt ```
+``` pip3 install -r requirements.txt ```
 3. To run program use this:  
 ``` fastqc_breaker.py -i <fastq-file-name> -o <output-dir-name> ```  
 
@@ -55,7 +55,8 @@ Our program provides the next metrics:
 - Overrepresented sequences
 - Adapter Content
 
-You can read more about all the characteristics in the [official documentation](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/Help/3%20Analysis%20Modules/) of the original FastQC project.
+You can read more about all the characteristics (exept Per base GC content) in the [official documentation](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/Help/3%20Analysis%20Modules/) of the original FastQC project.  
+Per base GC content plots out the GC content of each base position in a file. This module gives *warning* if the GC content of any base strays more than 5%  and *failure* if more than 10% from the mean GC content.
 
 ### Team members and contributions:
 1. [Tatiana Kikalova](https://github.com/Tatiana-kik)
