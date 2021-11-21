@@ -199,17 +199,29 @@ def per_sequence_gc_content(sequences, fastq_name, imgname):
 
 # -----------------------------------------------------------------------------
 # create image and return status
-def per_sequence_gc_content(sequences, fastq_name, imgname):
-    # image creation example
+def per_base_n_content(sequences, fastq_name, imgname):
+    # set 2D array of seq
+    reads = sequences.seq_mat
+    # create list with N bases
+    list_of_N_content = np.count_nonzero(reads == ord('N'), axis=0)
+    # translate to %
+    list_of_N_content = list_of_N_content * 100 / reads.shape[1]
+    # create plot for n base
     fig = plt.figure(figsize=(10, 7))
     ax = fig.add_subplot(111)
-    ax.set(title='per_sequence_gc_content')
+    ax.plot(list_of_N_content, color='red')
+    ax.set(title='N content across all bases', xlabel='Position in read(bp)')
+    ax.set_ylim(-2.0, 100.0)
+    ax.text(reads.shape[1] - 3, 97, r'%N', color='red')
+    ax.grid(color='black', linestyle='--', linewidth=0.5)
     fig.savefig(imgname)
 
     # define report status
     status = 'good'
-    status = 'warning'
-    status = 'fail'
+    if max(list_of_N_content) > 5:
+        status = 'warning'
+    if max(list_of_N_content) > 20:
+        status = 'fail'
     return status
 
 
@@ -246,7 +258,6 @@ def per_base_n_content(sequences, fastq_name, imgname):
 def sequence_length_distribution(sequences, fastq_name, imgname):
     # set 2D array of seq
     reads = sequences.seq_mat
-
     # create empty list for future work
     length_count = [0] * reads.shape[0]
 
