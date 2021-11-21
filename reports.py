@@ -452,10 +452,10 @@ def sequence_duplication_levels(sequences, fastq_name, imgname):
 
     x = ["1", "2", "3", "4", "5", "6", "7", "8", "9", ">10 ", ">50 ", ">100 ", ">500 ", ">1k ", ">5k ", ">10k "]
     y_total = [round((val / (counter // 4) + 1) * 100, 2) for val in bin_dict.values()]
-    y_unique = [round((val / len(seq_count)) * 100, 2) for val in bin_dict_un.values()]    
+    y_unique = [round((val / len(seq_count)) * 100, 2) for val in bin_dict_un.values()]
     # image creation example
     fig = plt.figure(figsize=(10, 7))
-    ax = fig.add_subplot(111)
+    # ax = fig.add_subplot(111)
     ax.set(title='sequence_duplication_levels')
     # removing top axes and right axes ticks
     ax.get_xaxis().tick_bottom()
