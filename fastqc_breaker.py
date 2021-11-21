@@ -76,7 +76,7 @@ def do_check(input_fastq, output_dir):
     img = output_dir + '/per_sequence_quality_scores.png'
     status = reports.per_sequence_quality_scores(sequences, input_fastq, img)
     tm5 = time.time()
-    print(f'4.  per_seq_quality_scores:       {(tm5 - tm4):.3f} sec')
+    print(f'4.  per_seq_quality_scores:     {(tm5 - tm4):.3f} sec')
     html.replace_words({'PER_SEQUENCE_QUALITY_SCORES_status': status})
 
     # Per base sequence content
@@ -118,7 +118,7 @@ def do_check(input_fastq, output_dir):
     img = output_dir + '/sequence_duplication_levels.png'
     status = reports.sequence_duplication_levels(sequences, input_fastq, img)
     tm10 = time.time()
-    print(f'10.  seq_duplication_levels:     {(tm10 - tm9):.3f} sec')
+    print(f'10.  seq_duplication_levels:    {(tm10 - tm9):.3f} sec')
     html.replace_words({'SEQUENCE_DUPLICATION_LEVELS_status': status})
 
     # Overrepresented sequences
