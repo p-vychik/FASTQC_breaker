@@ -1,19 +1,18 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import seaborn as sns
+
 
 # -----------------------------------------------------------------------------
 def basic_statistics(sequences, fastq_name):
-
     # words to replace in html report
     words = {
-        'BASIC_STATISTICS_filename':        fastq_name,
-        'BASIC_STATISTICS_file_type':       'set here filetype',
-        'BASIC_STATISTICS_encoding':        'set here encoding',
+        'BASIC_STATISTICS_filename': fastq_name,
+        'BASIC_STATISTICS_file_type': 'set here filetype',
+        'BASIC_STATISTICS_encoding': 'set here encoding',
         'BASIC_STATISTICS_total_sequences': 'set here total seqs num',
-        'BASIC_STATISTICS_seq_poor_qual':   'set here poor qual num',
-        'BASIC_STATISTICS_seq_len':         'set here seq len',
-        'BASIC_STATISTICS_gc':              'set here %GC'
+        'BASIC_STATISTICS_seq_poor_qual': 'set here poor qual num',
+        'BASIC_STATISTICS_seq_len': 'set here seq len',
+        'BASIC_STATISTICS_gc': 'set here %GC'
     }
     return words
 
@@ -21,7 +20,6 @@ def basic_statistics(sequences, fastq_name):
 # -----------------------------------------------------------------------------
 # create image and return status
 def per_base_sequence_quality(sequences, fastq_name, imgname):
-
     # Creating dataset
     # go by positions
     all_quals = []
@@ -61,7 +59,7 @@ def per_base_sequence_quality(sequences, fastq_name, imgname):
                 else:
                     x_labels.append("")  # empty label
         else:  # xstep > 1
-            if ((pos+1) % 6) == 0:
+            if ((pos + 1) % 6) == 0:
                 # pair label
                 x_labels.append(str(pos + 1) + '-' + str(pos + 2))
             else:
@@ -118,7 +116,6 @@ def per_base_sequence_quality(sequences, fastq_name, imgname):
 # -----------------------------------------------------------------------------
 # create image and return status
 def per_sequence_quality_scores(sequences, fastq_name, imgname):
-
     fig = plt.figure(figsize=(10, 7))
     ax = fig.add_subplot(111)
 
@@ -160,7 +157,6 @@ def per_sequence_quality_scores(sequences, fastq_name, imgname):
 # -----------------------------------------------------------------------------
 # create image and return status
 def per_base_sequence_content(sequences, fastq_name, imgname):
-
     # image creation example
     fig = plt.figure(figsize=(10, 7))
     ax = fig.add_subplot(111)
@@ -178,7 +174,6 @@ def per_base_sequence_content(sequences, fastq_name, imgname):
 # -----------------------------------------------------------------------------
 # create image and return status
 def per_sequence_gc_content(sequences, fastq_name, imgname):
-
     # image creation example
     fig = plt.figure(figsize=(10, 7))
     ax = fig.add_subplot(111)
@@ -195,7 +190,6 @@ def per_sequence_gc_content(sequences, fastq_name, imgname):
 # -----------------------------------------------------------------------------
 # create image and return status
 def per_sequence_gc_content(sequences, fastq_name, imgname):
-
     # image creation example
     fig = plt.figure(figsize=(10, 7))
     ax = fig.add_subplot(111)
@@ -215,17 +209,17 @@ def per_base_n_content(sequences, fastq_name, imgname):
     # set 2D array of seq
     reads = sequences.seq_mat
     # create list with N bases
-    list_of_N_content = np.count_nonzero(reads == ord('N'), axis = 0)
+    list_of_N_content = np.count_nonzero(reads == ord('N'), axis=0)
     # translate to %
     list_of_N_content = list_of_N_content * 100 / reads.shape[1]
     # create plot for n base
     fig = plt.figure(figsize=(10, 7))
     ax = fig.add_subplot(111)
-    ax.plot(list_of_N_content, color = 'red')
-    ax.set(title='N content across all bases', xlabel = 'Position in read(bp)')
-    ax.set_ylim(-2.0,100.0)
-    ax.text(reads.shape[1]-3, 97, r'%N', color = 'red')
-    ax.grid(color = 'black', linestyle = '--', linewidth = 0.5)
+    ax.plot(list_of_N_content, color='red')
+    ax.set(title='N content across all bases', xlabel='Position in read(bp)')
+    ax.set_ylim(-2.0, 100.0)
+    ax.text(reads.shape[1] - 3, 97, r'%N', color='red')
+    ax.grid(color='black', linestyle='--', linewidth=0.5)
     fig.savefig(imgname)
 
     # define report status
@@ -240,49 +234,44 @@ def per_base_n_content(sequences, fastq_name, imgname):
 # -----------------------------------------------------------------------------
 # create image and return status
 def sequence_length_distribution(sequences, fastq_name, imgname):
-
-     # set 2D array of seq
+    # set 2D array of seq
     reads = sequences.seq_mat
 
     # create empty list for future work
-    #des_of_length = np.arange(1, reads.shape[1]+1)
     length_count = [0] * reads.shape[0]
 
     for i in range(reads.shape[0]):
-        
-        line_read = reads[i,:]
+        line_read = reads[i, :]
         # remove empty elements
         line_read = line_read[line_read >= 0]
         # add plus 1 in position of length
         length_count[i] += line_read.size
-    
+
     mi_len = min(length_count)
     ma_len = max(length_count)
     # image creation example
     fig = plt.figure(figsize=(10, 7))
     ax = fig.add_subplot(111)
-    ax.hist(length_count, color = 'red', align = 'left')
-    ax.set_xticks([mi_len - 1, max(set(length_count), key=length_count.count), max(length_count) + 1])
-    ax.grid(axis = 'y')
-    ax.set(title = 'Distribution of sequence lengths over all sequences', xlabel = 'Sequence Length(bp)')
-    
-
+    ax.hist(length_count, color='red', align='left')
+    ax.set_xticks([mi_len - 1, max(set(length_count), key=length_count.count), ma_len + 1])
+    ax.grid(axis='y')
+    ax.set(title='Distribution of sequence lengths over all sequences', xlabel='Sequence Length(bp)')
 
     plt.savefig(imgname)
 
     # define report status
     status = 'good'
-    if 0 in length_count:    
+    if 0 in length_count:
         status = 'fail'
     elif min(length_count) != max(length_count):
         status = 'warning'
-    
+
     return status
+
 
 # -----------------------------------------------------------------------------
 # create image and return status
 def sequence_duplication_levels(sequences, fastq_name, imgname):
-
     # image creation example
     fig = plt.figure(figsize=(10, 7))
     ax = fig.add_subplot(111)
@@ -299,7 +288,6 @@ def sequence_duplication_levels(sequences, fastq_name, imgname):
 # -----------------------------------------------------------------------------
 # create image and return status
 def overrepresented_sequences(sequences, fastq_name, imgname):
-
     # image creation example
     fig = plt.figure(figsize=(10, 7))
     ax = fig.add_subplot(111)
@@ -316,7 +304,6 @@ def overrepresented_sequences(sequences, fastq_name, imgname):
 # -----------------------------------------------------------------------------
 # create image and return status
 def adapter_content(sequences, fastq_name, imgname):
-
     # image creation example
     fig = plt.figure(figsize=(10, 7))
     ax = fig.add_subplot(111)
