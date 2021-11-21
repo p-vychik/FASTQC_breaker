@@ -322,7 +322,7 @@ def per_sequence_gc_content(sequences, fastq_name, imgname):
     status = 'good'
     if 15 <= dev_percent < 30:
         status = 'warning'
-    elif dev_percent < 30:
+    elif dev_percent >= 30:
         status = 'fail'
     return status
 
