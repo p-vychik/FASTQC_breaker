@@ -1,50 +1,78 @@
 # FastQC Breaker
 
-## Всем привет! Это временное рабочее описание как и что работает.
+### Hello!
+This repository is for our Python project in Bioinformatics Institute. Here we created a program similar to [FastQC](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/) tool. 
 
-### Что сделано
-Я сделала:
-1. каркас приложения
-1. парсиг входного файла
-1. генерацию своих отчётов
-1. генерацию общего отчёта в виде HTML.
+### What is the FastQC?
+FastQC is a tool for quality control of high throughput sequence raw data. This program takes `.fastq` files and creates html report with some characteristics of reads quality.  
+Program makes:
+- summary for input data
+- graphics or tables for some data characteristics
+- status (good, warning or fail) for each characteristic
+- HTML report that contains all the above
 
-### Как запустить
-1. Сгенерировать отчёт: `python fastqc_breaker.py example.fastq`
-1. Посмотреть результат: `chromium Report/report.html`
+### Files in this repository
 
-После можно сгенерировать отчёт с помощью fastqc и сравнить результаты.
-Формат нашего отчёта повторяет отчёт от Fastqc.
+- `fastqc_breaker.py` - it is the main script that is calling all of the functions and creates report;  
+- `sequences.py` - class that parses `.fastq` file, creates 2D numpy arrays and make them suitable for subsequent work;  
+- `reports.py` - file that contains functions for each report block. Each function makes picture or table and returns status;  
+- `html_creator.py` - file that creates html report. There is template and pictures for it in the folder `HTML`.
 
-### Как это работает
+### How to run the program on your computer:
 
-#### `fastqc_breaker.py`
-Это главный файл программы. Он:
-1. парсит входной файл во внутреннее представление
-1. вызывает функции генерации отчётов
-1. вызывает генерацию итогового отчёта
+The program is written and tested in Python 3.9
 
-#### `sequences.py`
-Это класс. Он является представлением всех ридов из файла в виде numpy 2D array.
-Нампи-2Д-массив позволяет быстро обрабатывать большие файлы.
-Функциоал этого класса можно расширять при необходимости.
+1. Clone this repository using `git clone` command
+2. Install necessary requirements using next command:  
+``` pip3 install -r requirements.txt ```
+3. To run program use this:  
+``` fastqc_breaker.py -i <fastq-file-name> -o <output-dir-name> ```  
 
-#### `reports.py`
-Здесь находятся все функции, которые генерируют отчёты.
-Для каждого отчёта из общего отчёта есть отдельная функция.
-Каждая такая функция должны создать картинку отчёта с заданным именем
-и вернуть статус - good, warning или fail.
-На вход это функции приходит объект класа Sequences и требуемое имя картинки отчёта.
-Каждому из нас необходимо наполнить эти функции для своих отчётов.
-В каждой такой функции сейчас нвходиться пример кода, генерирующий пустой график
-и возвращающий статус.
-<br> <br>
-Исключение составляет первый отчёт - там таблица. В результате работы функция
-должна вернуть словарь со словами. Пример заполнения словаря уже есть в функции.
-Надо просто сделать наполнение реальными данными.
+    where:  
+    `<fastq-file-name>` - input file (with path if it is nessesary)  
+    `<output-dir-name>` - name of directory for output
 
-#### `html_creator.py`
-Это класс, который создаёт итоговый отчёт в виде хтмл. Впапке Html находится
-шаблон этого отчёта и вспомогательные картинки.
-В резльтате работы функций из reports.py, в исходном шаблоне отчёта будут
-подменены некоторые слова, и мы получим готовый отчёт.
+The program creates a folder where you will find `report.html` and separate pictures for each graphic.
+
+Our program was succesfully tested on the next OSs:
+- Linux Mint 20.2
+- Ubuntu 20.04
+- Windows 10 64-bit (via PhyCharm 2021.2.2)
+
+### Output of the program
+
+Our program provides the next metrics:  
+
+- Basic Statistics
+- Per base sequence quality
+- Per sequence quality scores
+- Per base sequence content
+- Per base GC content
+- Per sequence GC content
+- Per base N content
+- Sequence Length Distribution
+- Sequence Duplication Levels
+- Overrepresented sequences
+- Adapter Content
+
+You can read more about all the characteristics (exept Per base GC content) in the [official documentation](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/Help/3%20Analysis%20Modules/) of the original FastQC project.  
+Per base GC content plots out the GC content of each base position in a file. This module gives *warning* if the GC content of any base strays more than 5%  and *failure* if more than 10% from the mean GC content.
+
+### Team members and contributions:
+1. [Tatiana Kikalova](https://github.com/Tatiana-kik)
+- Backbone of the project (templates for all the files and for html report)
+- Per Base Sequence Quality function
+- Per Sequence Quality Scores function
+2. [Elena Grigoreva](https://github.com/lengrigo)
+- Per Base Sequence Content function
+- Per Base GC Content function
+- Per Sequence GC Content function
+- README file
+3. [Dmitrii Iliushchenko](https://github.com/DIliushchenko)
+- Per Base N Content function
+- Sequence Length Distribution function
+- requirements.txt file
+4. [Pavel Vychik](https://github.com/p-vychik)
+- Sequence Length Distribution function
+- Duplicate Sequences function
+- Adapter Content function
