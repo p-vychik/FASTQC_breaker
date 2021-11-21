@@ -1,1 +1,5 @@
-TODO
+matplotlib==3.5.0
+numpy==1.21.4
+plotly==5.4.0
+scipy==1.7.2
+kaleido==0.2.1
