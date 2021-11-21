@@ -118,7 +118,7 @@ def do_check(input_fastq, output_dir):
     img = output_dir + '/sequence_duplication_levels.png'
     status = reports.sequence_duplication_levels(sequences, input_fastq, img)
     tm10 = time.time()
-    print(f'10.  seq_duplication_levels:    {(tm10 - tm9):.3f} sec')
+    print(f'10. seq_duplication_levels:     {(tm10 - tm9):.3f} sec')
     html.replace_words({'SEQUENCE_DUPLICATION_LEVELS_status': status})
 
     # Overrepresented sequences
