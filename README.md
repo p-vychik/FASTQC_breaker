@@ -53,7 +53,6 @@ Our program provides the next metrics:
 - Sequence Length Distribution
 - Sequence Duplication Levels
 - Overrepresented sequences
-- Adapter Content
 
 You can read more about all the characteristics (exept Per base GC content) in the [official documentation](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/Help/3%20Analysis%20Modules/) of the original FastQC project.  
 Per base GC content plots out the GC content of each base position in a file. This module gives *warning* if the GC content of any base strays more than 5%  and *failure* if more than 10% from the mean GC content.
@@ -61,6 +60,7 @@ Per base GC content plots out the GC content of each base position in a file. Th
 ### Team members and contributions:
 1. [Tatiana Kikalova](https://github.com/Tatiana-kik)
 - Backbone of the project (templates for all the files and for html report)
+- Basic Statistics
 - Per Base Sequence Quality function
 - Per Sequence Quality Scores function
 2. [Elena Grigoreva](https://github.com/lengrigo)
@@ -73,6 +73,5 @@ Per base GC content plots out the GC content of each base position in a file. Th
 - Sequence Length Distribution function
 - requirements.txt file
 4. [Pavel Vychik](https://github.com/p-vychik)
-- Sequence Length Distribution function
-- Duplicate Sequences function
-- Adapter Content function
+- Sequence Duplication Levels
+- Overrepresented sequences

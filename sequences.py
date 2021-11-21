@@ -35,6 +35,7 @@ class Sequences:
         self.max_meanq = 0
         self.min_meanq = 100
         self.max_len = seq_len
+        self.min_len = seq_len
         self.seq_mat = np.empty((read_num, seq_len), dtype=np.int8)
         self.qual_mat = np.empty((read_num, seq_len), dtype=np.int8)
         # self.tile_arr = np.empty((read_num), dtype=np.int32)
@@ -48,6 +49,7 @@ class Sequences:
         print(f'sz={sys.getsizeof(self.seq_mat)} bytes in memory')
 
     def add(self, descr_line, seq_line, qual_line):
+        self.min_len = min(self.min_len, len(seq_line))
         lst = [ord(ch) for ch in seq_line]
         idx = self.count
         sl = len(seq_line)
@@ -77,17 +79,23 @@ class Sequences:
         self.max_q = max(self.max_q, mx)
         self.count += 1
 
-    def get_sequences(self):
-        return self.sequences
+    def get_read_number(self):
+        return self.seq_mat.shape[0]
 
     def max_length(self):
         return self.max_len
+
+    def min_length(self):
+        return self.min_len
 
     def max_qual(self):
         return self.max_q
 
     def get_qual_column(self, n):
         return self.qual_mat[:, n]
+
+    def get_seq_matrix(self):
+        return self.seq_mat
 
     def get_transpose_qual_matrix(self):
         return self.qual_mat.transpose()

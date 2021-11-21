@@ -6,15 +6,29 @@ from scipy import stats
 
 # -----------------------------------------------------------------------------
 def basic_statistics(sequences, fastq_name):
+    sq = sequences
+
+    # make length string - one value or range
+    str_len = str(sq.min_length())
+    if sq.min_length() != sq.max_length():
+        str_len += '-' + str(sq.max_length())
+
+    # calculate %GC
+    mat = sq.get_seq_matrix()
+    g_num = np.count_nonzero(mat[mat == ord('G')])
+    c_num = np.count_nonzero(mat[mat == ord('C')])
+    bases = np.count_nonzero(mat[mat > 0])
+    gc_percent = 100 * (g_num + c_num) / bases
+
     # words to replace in html report
     words = {
         'BASIC_STATISTICS_filename': fastq_name,
-        'BASIC_STATISTICS_file_type': 'set here filetype',
-        'BASIC_STATISTICS_encoding': 'set here encoding',
-        'BASIC_STATISTICS_total_sequences': 'set here total seqs num',
-        'BASIC_STATISTICS_seq_poor_qual': 'set here poor qual num',
-        'BASIC_STATISTICS_seq_len': 'set here seq len',
-        'BASIC_STATISTICS_gc': 'set here %GC'
+        'BASIC_STATISTICS_file_type': 'unknown',
+        'BASIC_STATISTICS_encoding': 'unknown',
+        'BASIC_STATISTICS_total_sequences': str(sq.get_read_number()),
+        'BASIC_STATISTICS_seq_poor_qual': str(0),
+        'BASIC_STATISTICS_seq_len': str_len,
+        'BASIC_STATISTICS_gc': f'{gc_percent:.1f}'
     }
     return words
 
@@ -412,22 +426,6 @@ def overrepresented_sequences(sequences, fastq_name, imgname):
     fig = plt.figure(figsize=(10, 7))
     ax = fig.add_subplot(111)
     ax.set(title='overrepresented_sequences')
-    fig.savefig(imgname)
-
-    # define report status
-    status = 'good'
-    status = 'warning'
-    status = 'fail'
-    return status
-
-
-# -----------------------------------------------------------------------------
-# create image and return status
-def adapter_content(sequences, fastq_name, imgname):
-    # image creation example
-    fig = plt.figure(figsize=(10, 7))
-    ax = fig.add_subplot(111)
-    ax.set(title='adapter_content')
     fig.savefig(imgname)
 
     # define report status

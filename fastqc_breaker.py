@@ -128,17 +128,10 @@ def do_check(input_fastq, output_dir):
     print(f'11. overrepresented_sequences:  {(tm11 - tm10):.3f} sec')
     html.replace_words({'OVERREPRESENTED_SEQUENCES_status': status})
 
-    # Adapter Content
-    img = output_dir + '/adapter_content.png'
-    status = reports.adapter_content(sequences, input_fastq, img)
-    tm12 = time.time()
-    print(f'12. adapter_content:            {(tm12 - tm11):.3f} sec')
-    html.replace_words({'ADAPTER_CONTENT_status': status})
-
     # generate html report
     rep_name = output_dir + '/report.html'
     html.make_report(rep_name)
-    print(f'13. report created:             {rep_name}')
+    print(f'12. report created:             {rep_name}')
 
     # close files
     fi.close()
