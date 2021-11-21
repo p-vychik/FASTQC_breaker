@@ -421,7 +421,7 @@ def sequence_duplication_levels(sequences, fastq_name, imgname):
             return 5000
         elif 10000 <= val:
             return 10000
-        
+    
     def count_line(seq):
         if seq in seq_count:
             seq_count[seq] += 1
