@@ -7,7 +7,6 @@ import pandas as pd
 from scipy import stats
 
 
-
 # -----------------------------------------------------------------------------
 def basic_statistics(sequences, fastq_name):
     # words to replace in html report
@@ -405,7 +404,7 @@ def sequence_duplication_levels(sequences, fastq_name, imgname):
                    500: 0, 1000: 0, 5000: 0, 10000: 0}
 
     seq_count = {}
-    
+
     def get_bin(val):
         if 10 <= val < 50:
             return 10
@@ -421,7 +420,7 @@ def sequence_duplication_levels(sequences, fastq_name, imgname):
             return 5000
         elif 10000 <= val:
             return 10000
-    
+
     def count_line(seq):
         if seq in seq_count:
             seq_count[seq] += 1
@@ -442,7 +441,7 @@ def sequence_duplication_levels(sequences, fastq_name, imgname):
                 if counter % 4 == 0:
                     # line = line[:50]
                     count_line(line)
-    for key, val in seq_count.items():
+    for _, val in seq_count.items():
         if val < 10:
             bin_dict[val] += val
             bin_dict_un[val] += 1
@@ -455,7 +454,7 @@ def sequence_duplication_levels(sequences, fastq_name, imgname):
     y_unique = [round((val / len(seq_count)) * 100, 2) for val in bin_dict_un.values()]
     # image creation example
     fig = plt.figure(figsize=(10, 7))
-    # ax = fig.add_subplot(111)
+    ax = fig.add_subplot(111)
     ax.set(title='sequence_duplication_levels')
     # removing top axes and right axes ticks
     ax.get_xaxis().tick_bottom()
@@ -532,7 +531,7 @@ def overrepresented_sequences(sequences, fastq_name, imgname):
     threshold = max(df_f["Percentage"])
     # image creation example
     fig = plt.figure(figsize=(10, 7))
-    ax = fig.add_subplot(111)
+    # ax = fig.add_subplot(111)
     # define report status
     if 0.1 <= threshold < 1:
         status = 'warning'
