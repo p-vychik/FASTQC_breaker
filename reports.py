@@ -177,9 +177,9 @@ def per_base_sequence_content(sequences, fastq_name, imgname):
     g_count = np.count_nonzero(lines == ord('G'), axis=0)
     c_count = np.count_nonzero(lines == ord('C'), axis=0)
     t_count = np.count_nonzero(lines == ord('T'), axis=0)
-    percents = np.vstack([g_count * 100 / lines.shape[0], a_count * 100 / lines.shape[0],
-                          t_count * 100 / lines.shape[0], c_count * 100 / lines.shape[0]])
-
+    reads_length = np.count_nonzero(lines != -1, axis=0)
+    percents = np.vstack([g_count * 100 / reads_length, a_count * 100 / reads_length,
+                          t_count * 100 / reads_length, c_count * 100 / reads_length])
     # image creation
     fig = plt.figure(figsize=(10, 7))
     ax = fig.add_subplot(111)
@@ -190,31 +190,12 @@ def per_base_sequence_content(sequences, fastq_name, imgname):
     ys3 = percents[2]  # t
     ys4 = percents[3]  # c
 
-    # add pretty x-labels, make low density to be readable
-    cnt = 0
-    pos = 0  # position in sequence
-    x_step = 1
-    x_labels = []  # list of labels
-    xlen = lines.shape[1]  # length of reads
-    while pos < xlen:  # iter by position
-        if xlen > 60 and cnt == 9:
-            x_step = 2
-        if x_step == 1:
-            if cnt < 9:
-                x_labels.append(str(pos + 1))
-            else:
-                if (pos % 2) == 0:
-                    x_labels.append(str(pos + 1))
-                else:
-                    x_labels.append("")  # empty label
-        else:  # xstep > 1
-            if ((pos + 1) % 6) == 0:
-                # pair label
-                x_labels.append(str(pos + 1) + '-' + str(pos + 2))
-            else:
-                x_labels.append("")  # empty label
-        pos += 1
-        cnt += 1
+    x_labels = []
+    for i in range(lines.shape[1]):
+        if (i < 101 and i % 5 == 0) or (i > 100 and i % 10 == 0):
+            x_labels.append(i)
+        else:
+            x_labels.append('')
 
     ax.plot(xs, ys1, label='%G', color='r')
     ax.plot(xs, ys2, label='%A', color='blue')
@@ -260,30 +241,12 @@ def per_base_gc_content(sequences, fastq_name, imgname):
     ax.set(title='GC content across all bases')
     xs = range(sequences.max_len)  # max seq len in class sequences
 
-    cnt = 0
-    pos = 0  # position in sequence
-    x_step = 1
-    x_labels = []  # list of labels
-    xlen = lines.shape[1]  # length of reads
-    while pos < xlen:  # iter by position
-        if xlen > 60 and cnt == 9:
-            x_step = 2
-        if x_step == 1:
-            if cnt < 9:
-                x_labels.append(str(pos + 1))
-            else:
-                if (pos % 2) == 0:
-                    x_labels.append(str(pos + 1))
-                else:
-                    x_labels.append("")  # empty label
-        else:  # xstep > 1
-            if ((pos + 1) % 6) == 0:
-                # pair label
-                x_labels.append(str(pos + 1) + '-' + str(pos + 2))
-            else:
-                x_labels.append("")  # empty label
-        pos += 1
-        cnt += 1
+    x_labels = []
+    for i in range(lines.shape[1]):
+        if (i < 101 and i % 5 == 0) or (i > 100 and i % 10 == 0):
+            x_labels.append(i)
+        else:
+            x_labels.append('')
 
     ax.plot(xs, gc_count, label='%GC', color='r')
     ax.set_xlim([1, lines.shape[1] + 1])
@@ -340,7 +303,7 @@ def per_sequence_gc_content(sequences, fastq_name, imgname):
     ax.set_xticks(range(0, lines.shape[1], 1))
     x_labels = []
     for i in range(lines.shape[1]):
-        if i % 5 == 0:
+        if (i < 101 and i % 5 == 0) or (i > 100 and i % 10 == 0):
             x_labels.append(i)
         else:
             x_labels.append('')

@@ -90,7 +90,7 @@ def do_check(input_fastq, output_dir):
     img = output_dir + '/per_base_gc_content.png'
     status = reports.per_base_gc_content(sequences, input_fastq, img)
     tm6 = time.time()
-    print(f'5.  per_base_gc_content:       {(tm6 - tm5):.3f} sec')
+    print(f'5.  per_base_gc_content:        {(tm6 - tm5):.3f} sec')
     html.replace_words({'PER_BASE_GC_CONTENT_status': status})
 
     # Per sequence GC content

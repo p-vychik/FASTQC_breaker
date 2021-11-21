@@ -14,23 +14,23 @@ Program makes:
 ### Files in this repository
 
 - `fastqc_breaker.py` - it is the main script that is calling all of the functions and creates report;  
-- `sequences.py` - class that pars `.fastq` file and creates 2D numpy arrays and make them sutable for subsequent work;  
+- `sequences.py` - class that parses `.fastq` file, creates 2D numpy arrays and make them suitable for subsequent work;  
 - `reports.py` - file that contains functions for each report block. Each function makes picture or table and returns status;  
 - `html_creator.py` - file that creates html report. There is template and pictures for it in the folder `HTML`.
 
-### How to run the program in your computer:
+### How to run the program on your computer:
 
 The program is written and tested in Python 3.9
 
 1. Clone this repository using `git clone` command
-2. Install nessesary requirements using next command:  
+2. Install necessary requirements using next command:  
 ``` pip3 instal -r requirements.txt ```
 3. To run program use this:  
-``` fastqc_breaker.py -i <fastq-file-name> -o <fastq-file-name> ```  
+``` fastqc_breaker.py -i <fastq-file-name> -o <output-dir-name> ```  
 
     where:  
     `<fastq-file-name>` - input file (with path if it is nessesary)  
-    `<fastq-file-name>` - name of directory for output
+    `<output-dir-name>` - name of directory for output
 
 The program creates a folder where you will find `report.html` and separate pictures for each graphic.
 
@@ -58,7 +58,7 @@ Our program provides the next metrics:
 You can read more about all the characteristics in the [official documentation](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/Help/3%20Analysis%20Modules/) of the original FastQC project.
 
 ### Team members and contributions:
-1. [Tatyana Kikalova](https://github.com/Tatiana-kik)
+1. [Tatiana Kikalova](https://github.com/Tatiana-kik)
 - Backbone of the project (templates for all the files and for html report)
 - Per Base Sequence Quality function
 - Per Sequence Quality Scores function
