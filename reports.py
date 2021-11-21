@@ -1,6 +1,9 @@
 import math
 import numpy as np
 import matplotlib.pyplot as plt
+import hashlib
+import plotly.graph_objects as go
+import pandas as pd
 from scipy import stats
 
 
@@ -406,30 +409,150 @@ def sequence_length_distribution(sequences, fastq_name, imgname):
 # -----------------------------------------------------------------------------
 # create image and return status
 def sequence_duplication_levels(sequences, fastq_name, imgname):
+    bin_dict = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0,
+                7: 0, 8: 0, 9: 0, 10: 0, 50: 0, 100: 0,
+                500: 0, 1000: 0, 5000: 0, 10000: 0}
+
+    bin_dict_un = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0,
+                   7: 0, 8: 0, 9: 0, 10: 0, 50: 0, 100: 0,
+                   500: 0, 1000: 0, 5000: 0, 10000: 0}
+
+    seq_count = {}
+
+    def get_bin(val):
+        if 10 <= val < 50:
+            return 10
+        elif 50 <= val < 100:
+            return 50
+        elif 100 <= val < 500:
+            return 100
+        elif 500 <= val < 1000:
+            return 500
+        elif 1000 <= val < 5000:
+            return 1000
+        elif 5000 <= val < 10000:
+            return 5000
+        elif 10000 <= val:
+            return 10000
+
+    def count_line(seq):
+        if seq in seq_count:
+            seq_count[seq] += 1
+        else:
+            seq_count[seq] = 1
+
+    with open(fastq_name, 'r') as fastq_file:
+        counter = 0
+        reset_counter = False
+        for line in fastq_file:
+            counter += 1
+            line = line[:50]
+            if counter == 2 and not reset_counter:
+                count_line(line)
+                counter = 0
+                reset_counter = True
+            else:
+                if counter % 4 == 0:
+                    # line = line[:50]
+                    count_line(line)
+    for _, val in seq_count.items():
+        if val < 10:
+            bin_dict[val] += val
+            bin_dict_un[val] += 1
+        else:
+            bin_dict[get_bin(val)] += val
+            bin_dict_un[get_bin(val)] += 1
+
+    x = ["1", "2", "3", "4", "5", "6", "7", "8", "9", ">10 ", ">50 ", ">100 ", ">500 ", ">1k ", ">5k ", ">10k "]
+    y_total = [round((val / (counter // 4) + 1) * 100, 2) for val in bin_dict.values()]
+    y_unique = [round((val / len(seq_count)) * 100, 2) for val in bin_dict_un.values()]
     # image creation example
     fig = plt.figure(figsize=(10, 7))
     ax = fig.add_subplot(111)
     ax.set(title='sequence_duplication_levels')
+    # removing top axes and right axes ticks
+    ax.get_xaxis().tick_bottom()
+    ax.get_yaxis().tick_left()
+    # make grid
+    plt.grid(axis='x')
+    plt.grid(axis='y')
+    # ax.set_xlim([min_mq, max_mq])
+    ax.set_ylim([0, 100])
+    # add title
+    ax.set(xlabel='Sequence Duplication Level', ylabel='')
+    # add mean line
+    ax.plot(x, y_total, color='blue')
+    ax.plot(x, y_unique, color='red')
     fig.savefig(imgname)
-
     # define report status
-    status = 'good'
-    status = 'warning'
-    status = 'fail'
+    if y_total[1] > 50:
+        status = 'fail'
+    elif y_total[1] > 20:
+        status = 'warning'
+    else:
+        status = 'good'
     return status
 
 
 # -----------------------------------------------------------------------------
 # create image and return status
 def overrepresented_sequences(sequences, fastq_name, imgname):
+    LINES_COUNT = 0
+    SEQUENCES_SHA = {}
+    SEQUENCES_PRINT = {}
+
+    def process_line(line):
+        seq_part = line[:50]
+        line = line.encode('utf-8')
+        line_sha = hashlib.sha256(line).hexdigest()
+        if line_sha in SEQUENCES_SHA:
+            if seq_part in SEQUENCES_PRINT:
+                SEQUENCES_PRINT[seq_part] += 1
+            else:
+                SEQUENCES_PRINT[seq_part] = 2
+        else:
+            SEQUENCES_SHA[line_sha] = 1
+
+    with open(fastq_name, 'r') as fastq_file:
+        # read second line with sequence, after that process every 4th line
+        reset_counter = False
+        for line in fastq_file:
+            LINES_COUNT += 1
+            if LINES_COUNT == 2 and not (reset_counter):
+                process_line(line)
+                LINES_COUNT = 0
+                reset_counter = True
+            else:
+                if LINES_COUNT % 4 == 0:
+                    process_line(line)
+    d_seqs = [k for k in SEQUENCES_PRINT.keys()]
+    d_count = [v for v in SEQUENCES_PRINT.values()]
+    data = {"Sequence": d_seqs,
+            "Count": d_count}
+    df = pd.DataFrame.from_dict(data)
+    df["Percentage"] = round((df["Count"] / ((LINES_COUNT // 4) + 1)) * 100, 2)
+    df = df.sort_values(by="Count", ascending=False)
+    df_f = df[df["Percentage"] > 0.1]
+    df_f = df_f.nlargest(n=20, columns=["Percentage"])
+    fig = go.Figure(data=[go.Table(
+        header=dict(values=list(df_f.columns),
+                    fill_color='white',
+                    align='left'),
+        cells=dict(values=[df_f["Sequence"], df_f["Count"], df_f["Percentage"]],
+                   fill_color='white',
+                   align='left'))
+    ])
+    threshold = max(df_f["Percentage"])
     # image creation example
     fig = plt.figure(figsize=(10, 7))
-    ax = fig.add_subplot(111)
-    ax.set(title='overrepresented_sequences')
-    fig.savefig(imgname)
-
+    # ax = fig.add_subplot(111)
     # define report status
-    status = 'good'
-    status = 'warning'
-    status = 'fail'
+    if 0.1 <= threshold < 1:
+        status = 'warning'
+    elif threshold > 1:
+        status = 'fail'
+    else:
+        status = 'good'
+    fig.update_layout(title="Top 20 of overrepresented sequences")
+    fig.write_image(imgname)
     return status
