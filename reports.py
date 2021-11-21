@@ -405,7 +405,7 @@ def sequence_duplication_levels(sequences, fastq_name, imgname):
                    500: 0, 1000: 0, 5000: 0, 10000: 0}
 
     seq_count = {}
-
+    
     def get_bin(val):
         if 10 <= val < 50:
             return 10
@@ -421,7 +421,7 @@ def sequence_duplication_levels(sequences, fastq_name, imgname):
             return 5000
         elif 10000 <= val:
             return 10000
-
+        
     def count_line(seq):
         if seq in seq_count:
             seq_count[seq] += 1
@@ -452,8 +452,7 @@ def sequence_duplication_levels(sequences, fastq_name, imgname):
 
     x = ["1", "2", "3", "4", "5", "6", "7", "8", "9", ">10 ", ">50 ", ">100 ", ">500 ", ">1k ", ">5k ", ">10k "]
     y_total = [round((val / (counter // 4) + 1) * 100, 2) for val in bin_dict.values()]
-    y_unique = [round((val / len(seq_count)) * 100, 2) for val in bin_dict_un.values()]
-    
+    y_unique = [round((val / len(seq_count)) * 100, 2) for val in bin_dict_un.values()]    
     # image creation example
     fig = plt.figure(figsize=(10, 7))
     ax = fig.add_subplot(111)
@@ -461,21 +460,17 @@ def sequence_duplication_levels(sequences, fastq_name, imgname):
     # removing top axes and right axes ticks
     ax.get_xaxis().tick_bottom()
     ax.get_yaxis().tick_left()
-
     # make grid
     plt.grid(axis='x')
     plt.grid(axis='y')
     # ax.set_xlim([min_mq, max_mq])
     ax.set_ylim([0, 100])
-
     # add title
     ax.set(xlabel='Sequence Duplication Level', ylabel='')
-
     # add mean line
     ax.plot(x, y_total, color='blue')
     ax.plot(x, y_unique, color='red')
     fig.savefig(imgname)
-
     # define report status
     if y_total[1] > 50:
         status = 'fail'
@@ -535,7 +530,6 @@ def overrepresented_sequences(sequences, fastq_name, imgname):
                    align='left'))
     ])
     threshold = max(df_f["Percentage"])
-
     # image creation example
     fig = plt.figure(figsize=(10, 7))
     ax = fig.add_subplot(111)
