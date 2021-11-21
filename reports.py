@@ -242,7 +242,6 @@ def sequence_duplication_levels(sequences, fastq_name, imgname):
 
     seq_count = {}
 
-
     def get_bin(val):
         if 10 <= val < 50:
             return 10
@@ -259,13 +258,11 @@ def sequence_duplication_levels(sequences, fastq_name, imgname):
         elif 10000 <= val:
             return 10000
 
-
     def count_line(seq):
         if seq in seq_count:
             seq_count[seq] += 1
         else:
             seq_count[seq] = 1
-
 
     with open(fastq_name, 'r') as fastq_file:
         counter = 0
@@ -292,7 +289,6 @@ def sequence_duplication_levels(sequences, fastq_name, imgname):
     x = ["1", "2", "3", "4", "5", "6", "7", "8", "9", ">10 ", ">50 ", ">100 ", ">500 ", ">1k ", ">5k ", ">10k "]
     y_total = [round((val / (counter // 4) + 1) * 100, 2) for val in bin_dict.values()]
     y_unique = [round((val / len(seq_count)) * 100, 2) for val in bin_dict_un.values()]
-    #***
     # image creation example
     fig = plt.figure(figsize=(10, 7))
     ax = fig.add_subplot(111)
@@ -304,7 +300,7 @@ def sequence_duplication_levels(sequences, fastq_name, imgname):
     # make grid
     plt.grid(axis='x')
     plt.grid(axis='y')
-    #ax.set_xlim([min_mq, max_mq])
+    # ax.set_xlim([min_mq, max_mq])
     ax.set_ylim([0, 100])
 
     # add title
@@ -332,7 +328,6 @@ def overrepresented_sequences(sequences, fastq_name, imgname):
     SEQUENCES_SHA = {}
     SEQUENCES_PRINT = {}
 
-
     def process_line(line):
         seq_part = line[:50]
         line = line.encode('utf-8')
@@ -344,7 +339,6 @@ def overrepresented_sequences(sequences, fastq_name, imgname):
                 SEQUENCES_PRINT[seq_part] = 2
         else:
             SEQUENCES_SHA[line_sha] = 1
-
 
     with open(fastq_name, 'r') as fastq_file:
         # read second line with sequence, after that process every 4th line
